@@ -30,6 +30,7 @@ function EditEmployee(props) {
         <form onSubmit={(e) => {
             e.preventDefault();
             props.updateEmployee(props.id, name, role);
+            handleClose();
             }} id="editmodal" className="w-full max-w-sm">
                 <div className="md:flex md:items-center mb-6">
                     <div className="md:w-1/3">
