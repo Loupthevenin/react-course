@@ -13,7 +13,7 @@ export default function Customers() {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(location.state.previousUrl);
+    console.log(location?.state?.previousUrl);
   });
 
   function toggleShow() {
