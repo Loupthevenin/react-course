@@ -1,11 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { baseUrl } from "../shared";
 import AddCustomer from "../components/AddCustomer";
+import { LoginContext } from "../App";
 
 export default function Customers() {
+  const [loggedIn, setLoggedIn] = useContext(LoginContext);
   const [customers, setCustomers] = useState();
   const [show, setShow] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log(location.state.previousUrl);
+  });
 
   function toggleShow() {
     setShow(!show);
@@ -14,8 +23,23 @@ export default function Customers() {
   useEffect(() => {
     console.log("Fetching...");
     const url = baseUrl + "/api/customers/";
-    fetch(url)
-      .then((response) => response.json())
+    fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("access"),
+      },
+    })
+      .then((response) => {
+        if (response.status === 401) {
+          setLoggedIn(false);
+          navigate("/login", {
+            state: {
+              previousUrl: location.pathname,
+            },
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         setCustomers(data.customers);
       });
